@@ -1,0 +1,15 @@
+#gameBoard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  border: black solid 2px;
+  height: 350px;
+  width: 350px;
+}
+#gameBoard > div {
+  border: 2px black solid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+}
