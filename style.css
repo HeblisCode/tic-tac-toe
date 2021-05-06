@@ -1,55 +1,185 @@
 * {
   margin: 0;
   padding: 0;
+  font-family: "Nanum Gothic", sans-serif;
+  font-weight: bold;
 }
 body {
   height: 100vh;
   width: 100vw;
+  background-color: var(--primary);
 }
+#game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/*COLOR PALETTE*********************************************************/
+:root {
+  --primary: #1f252f;
+  --secondary: #b67c9a;
+  --accOne: #e5e6e9;
+  --accTwo: #73436d;
+}
+
+/*CLASSES*************************************************************/
+.center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/*GENERAL STYLES*****************************************************/
+button {
+  background-color: var(--accTwo);
+  border: none;
+  color: var(--accOne);
+  font-size: 15px;
+}
+button:hover,
+.selected {
+  background-color: var(--accOne);
+  color: var(--accTwo);
+  cursor: pointer;
+}
+
+/*GAME BOARD STYLING*************************************************/
 #gameBoard {
+  order: 1;
+  grid-row: span 2;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  border: black solid 2px;
+  gap: 4px;
+  background-color: var(--secondary);
   height: 350px;
   width: 350px;
+  margin: 50px;
 }
 #gameBoard > div {
-  border: 2px black solid;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 50px;
+  background-color: var(--primary);
+  color: var(--accTwo);
 }
 
-#gameModeMenu {
+/*FORM STYLING********************************************************/
+#playersInfoForm {
+  order: 0;
+  height: auto;
+  width: 290px;
+  display: grid;
+  grid-template-columns: 1fr 200px 50px;
+  grid-template-rows: 50px 50px auto;
+  row-gap: 5px;
+  background-color: var(--secondary);
+  padding: 10px;
+  padding-bottom: 6px;
+}
+#playersInfoForm > label {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--secondary);
+  background-color: var(--accTwo);
+}
+#playersInfoForm > input {
+  border: none;
+  font-size: 25px;
+  min-width: 0;
+  background-color: var(--accTwo);
+  color: var(--accOne);
+}
+#playerOne {
+  order: 1;
+  padding-left: 5px;
+}
+#playerOneSymbol {
+  order: 2;
+  text-align: center;
+}
+#playerOneLabel {
+  order: 0;
+}
+#playerTwo {
+  order: 4;
+  padding-left: 5px;
+}
+#playerTwoSymbol {
+  order: 5;
+  text-align: center;
+}
+#playerTwoLabel {
+  order: 3;
+}
+#playersInfoForm > button {
+  grid-column: span 3;
+  order: 6;
+  width: 100%;
+  height: 50px;
+  justify-self: center;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/*GAME MODE MENU STYLING***********************************************/
+#gameModeMenu {
+  order: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 70px;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: var(--secondary);
+  width: 290px;
+  padding: 10px;
 }
 #gameModeMenu > button {
-  height: 100px;
-  width: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   word-wrap: break-word;
+  padding: 8px;
+}
+#gameModeMenu > button > span {
+  font-size: 36px;
 }
 
+/*POPUP AREA****************************************************************/
 #popUpMessageAreaContainer {
   display: none;
+  z-index: 10;
   position: fixed;
+  background-color: var(--primary);
   left: 0;
   top: 0;
   height: 100%;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
   justify-content: center;
   align-items: center;
 }
 #popUpMessageArea {
-  height: 400px;
-  width: 400px;
+  height: auto;
+  width: auto;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rosybrown;
+  background-color: var(--secondary);
+  padding: 0 50px 0 50px;
+}
+#popUpMessageArea > p {
+  font-size: 30px;
+  margin: 30px;
+}
+#popUpMessageArea > button {
+  margin: 30px;
+  width: 100px;
+  height: 50px;
 }

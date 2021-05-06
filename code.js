@@ -76,18 +76,11 @@ const Controller = (function () {
   let _currentPlayer;
   let AIMode = false;
 
-  //get the DOM elements
   const _cells = document.querySelectorAll("#gameBoard > div");
-
-  //assign click event listeners
   _cells.forEach((cell) => cell.addEventListener("click", _cellClick));
 
-  function startNewGame(player1, player2, symbol1, symbol2) {
-    _players[0] = playerFactory(player1, symbol1);
-    _players[1] = playerFactory(player2, symbol2);
-    _currentPlayer = 0;
-    Gameboard.reset();
-    _render(Gameboard.getGridArray());
+  function _render(array) {
+    _cells.forEach((cell, i) => (cell.innerHTML = array[i]));
   }
 
   function _changePlayer() {
@@ -97,7 +90,6 @@ const Controller = (function () {
       _currentPlayer = 0;
     }
   }
-
   function _cellClick(e) {
     //do the play
     const playResult = Gameboard.play(
@@ -106,25 +98,28 @@ const Controller = (function () {
     );
     //check play validity
     if (playResult === "invalid") return;
+    //display the play
     _render(Gameboard.getGridArray());
     //check for win or tie
     if (!playResult && Gameboard.isFull()) {
-      tie();
+      _tie();
     } else {
-      playResult ? win(_players[_currentPlayer]) : _changePlayer();
+      playResult ? _win(_players[_currentPlayer]) : _changePlayer();
     }
   }
-
-  function _render(array) {
-    _cells.forEach((cell, i) => (cell.innerHTML = array[i]));
-  }
-
-  function win(player) {
+  function _win(player) {
     MenuController.displayMessage(`${player.getName()} wins!`);
   }
-
-  function tie() {
+  function _tie() {
     MenuController.displayMessage("It's a tie!");
+  }
+
+  function startNewGame(player1, player2, symbol1, symbol2) {
+    _players[0] = playerFactory(player1, symbol1);
+    _players[1] = playerFactory(player2, symbol2);
+    _currentPlayer = 0;
+    Gameboard.reset();
+    _render(Gameboard.getGridArray());
   }
 
   return {
@@ -181,18 +176,28 @@ const MenuController = (function () {
     _hideSubmit();
   }
 
+  function _AIModeOn() {
+    Controller.AIMode = true;
+    _gameModeAIButton.classList.add("selected");
+    _gameModePvPButton.classList.remove("selected");
+    _submitForm();
+    alert("Coming Soon");
+  }
+
+  function _AIModeOff() {
+    Controller.AIMode = false;
+    _gameModeAIButton.classList.remove("selected");
+    _gameModePvPButton.classList.add("selected");
+    _submitForm();
+  }
+
   _form.addEventListener("input", _showSubmit);
   _formButton.addEventListener("click", _submitForm);
-  _gameModeAIButton.addEventListener("click", () => {
-    Controller.AIMode = true;
-    _submitForm();
-  });
-  _gameModePvPButton.addEventListener("click", () => {
-    Controller.AIMode = false;
-    _submitForm();
-  });
+  _gameModeAIButton.addEventListener("click", _AIModeOn);
 
-  _submitForm();
+  _gameModePvPButton.addEventListener("click", _AIModeOff);
+
+  _submitForm(); //starts the game with default values
 
   return {
     displayMessage,
