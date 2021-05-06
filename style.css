@@ -1,3 +1,11 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  height: 100vh;
+  width: 100vw;
+}
 #gameBoard {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -12,4 +20,36 @@
   justify-content: center;
   align-items: center;
   font-size: 50px;
+}
+
+#gameModeMenu {
+  display: flex;
+}
+#gameModeMenu > button {
+  height: 100px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  word-wrap: break-word;
+}
+
+#popUpMessageAreaContainer {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+}
+#popUpMessageArea {
+  height: 400px;
+  width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rosybrown;
 }
