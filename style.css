@@ -8,6 +8,7 @@ body {
   height: 100vh;
   width: 100vw;
   background-color: var(--primary);
+  display: flex;
 }
 #game {
   display: flex;
@@ -17,10 +18,10 @@ body {
 
 /*COLOR PALETTE*********************************************************/
 :root {
-  --primary: #1f252f;
-  --secondary: #b67c9a;
-  --accOne: #e5e6e9;
-  --accTwo: #73436d;
+  --primary: #1e3d58;
+  --secondary: #057dcd;
+  --accOne: #43b0f1;
+  --accTwo: #e8eef1;
 }
 
 /*CLASSES*************************************************************/
@@ -33,16 +34,19 @@ body {
 
 /*GENERAL STYLES*****************************************************/
 button {
-  background-color: var(--accTwo);
+  box-sizing: border-box;
+  background-color: var(--secondary);
   border: none;
-  color: var(--accOne);
+  color: var(--accTwo);
   font-size: 15px;
 }
-button:hover,
-.selected {
-  background-color: var(--accOne);
-  color: var(--accTwo);
+button:hover {
+  background-color: var(--accTwo);
+  color: var(--secondary);
   cursor: pointer;
+}
+.selected {
+  border: var(--accTwo) 3px solid;
 }
 
 /*GAME BOARD STYLING*************************************************/
@@ -65,6 +69,7 @@ button:hover,
   font-size: 50px;
   background-color: var(--primary);
   color: var(--accTwo);
+  cursor: pointer;
 }
 
 /*FORM STYLING********************************************************/
@@ -76,7 +81,6 @@ button:hover,
   grid-template-columns: 1fr 200px 50px;
   grid-template-rows: 50px 50px auto;
   row-gap: 5px;
-  background-color: var(--secondary);
   padding: 10px;
   padding-bottom: 6px;
 }
@@ -84,15 +88,16 @@ button:hover,
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--secondary);
-  background-color: var(--accTwo);
+  color: var(--accTwo);
+  background-color: var(--secondary);
+  cursor: pointer;
 }
 #playersInfoForm > input {
   border: none;
   font-size: 25px;
   min-width: 0;
-  background-color: var(--accTwo);
-  color: var(--accOne);
+  background-color: var(--secondary);
+  color: var(--accTwo);
 }
 #playerOne {
   order: 1;
@@ -135,7 +140,6 @@ button:hover,
   gap: 10px;
   align-items: center;
   justify-content: space-evenly;
-  background-color: var(--secondary);
   width: 290px;
   padding: 10px;
 }
@@ -159,8 +163,8 @@ button:hover,
   background-color: var(--primary);
   left: 0;
   top: 0;
-  height: 100%;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
   justify-content: center;
   align-items: center;
 }
@@ -171,15 +175,39 @@ button:hover,
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: var(--secondary);
   padding: 0 50px 0 50px;
 }
 #popUpMessageArea > p {
-  font-size: 30px;
+  font-size: 60px;
   margin: 30px;
+  color: var(--accTwo);
 }
 #popUpMessageArea > button {
   margin: 30px;
   width: 100px;
   height: 50px;
+}
+/*AUTHOR INFO********************************************************/
+#author {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: underline;
+  opacity: 0.8;
+  bottom: 10px;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+#author > a:hover {
+  color: var(--accOne);
+}
+#author > a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  text-decoration: none;
+  color: var(--accTwo);
+  font-size: 15px;
 }

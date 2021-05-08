@@ -2,6 +2,7 @@ const Gameboard = (function () {
   let _gridArray = ["", "", "", "", "", "", "", "", ""]; //from top left to bottom right
 
   const getGridArray = () => _gridArray;
+
   const reset = () => (_gridArray = ["", "", "", "", "", "", "", "", ""]);
 
   const _getGridParts = (gameboard) => {
@@ -21,16 +22,13 @@ const Gameboard = (function () {
     return gridParts;
   };
 
-  const _isFull = (gameboard) => {
-    return gameboard.indexOf("") < 0;
-  };
-
   const checkWin = (gameboard, symbol) => {
     const gridParts = _getGridParts(gameboard);
     const win = gridParts.some((element) =>
       element.every((symb) => symb === symbol)
     );
-    return !win && _isFull(gameboard) ? "tie" : win;
+    const isFull = gameboard.indexOf("") < 0;
+    return !win && isFull ? "tie" : win;
   };
 
   const play = (index, symbol) => {
@@ -48,18 +46,12 @@ const Gameboard = (function () {
 })();
 
 const playerFactory = (name, symbol) => {
-  let _wins = 0;
-
   const getName = () => name;
   const getSymbol = () => symbol;
-  const getWins = () => _wins;
-  const win = () => _wins++;
 
   const proto = {
     getName,
     getSymbol,
-    getWins,
-    win,
   };
 
   return Object.create(proto);
@@ -68,13 +60,13 @@ const playerFactory = (name, symbol) => {
 const Controller = (function () {
   let _players = [];
   let _currentPlayer;
-  let _AIMode = true;
+  let _AIMode = false;
 
   const _cells = document.querySelectorAll("#gameBoard > div");
   _cells.forEach((cell) => cell.addEventListener("click", _cellClick));
 
-  function _render(array) {
-    _cells.forEach((cell, i) => (cell.innerHTML = array[i]));
+  function _render() {
+    _cells.forEach((cell, i) => (cell.innerHTML = Gameboard.getGridArray()[i]));
   }
 
   function setAIMode(bool) {
@@ -88,13 +80,14 @@ const Controller = (function () {
       _currentPlayer = 0;
     }
   }
+
   function _checkGameOver(play) {
     if (play === "tie") {
       _tie();
-    } else {
-      play ? _win(_players[_currentPlayer]) : _changePlayer();
     }
+    play ? _win(_players[_currentPlayer]) : _changePlayer();
   }
+
   function _checkForAI() {
     if (_AIMode) {
       const bestMoveIndex = AI.getBestPlayIndex(
@@ -106,25 +99,28 @@ const Controller = (function () {
         bestMoveIndex,
         _players[_currentPlayer].getSymbol()
       );
-      _render(Gameboard.getGridArray());
+      _render();
       _checkGameOver(AIPlay);
     }
   }
+
   function _cellClick(e) {
     const playResult = Gameboard.play(
       e.target.id,
       _players[_currentPlayer].getSymbol()
     );
     if (playResult === "invalid") return;
-    _render(Gameboard.getGridArray());
+    _render();
     _checkGameOver(playResult);
     _checkForAI();
   }
+
   function _win(player) {
     MenuController.displayMessage(`${player.getName()} wins!`);
   }
+
   function _tie() {
-    MenuController.displayMessage("It's a tie!");
+    MenuController.displayMessage(`It's a tie!`);
   }
 
   function startNewGame(player1, player2, symbol1, symbol2) {
@@ -132,7 +128,7 @@ const Controller = (function () {
     _players[1] = playerFactory(player2, symbol2);
     _currentPlayer = 0;
     Gameboard.reset();
-    _render(Gameboard.getGridArray());
+    _render();
   }
 
   return {
