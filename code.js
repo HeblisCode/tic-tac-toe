@@ -4,49 +4,43 @@ const Gameboard = (function () {
   const getGridArray = () => _gridArray;
   const reset = () => (_gridArray = ["", "", "", "", "", "", "", "", ""]);
 
-  const _getGridParts = (grid) => {
+  const _getGridParts = (gameboard) => {
     const gridParts = [];
-
+    let tempGrid = gameboard.map((element) => element);
     //diagonals
-    gridParts.push([grid[0], grid[4], grid[8]]);
-    gridParts.push([grid[2], grid[4], grid[6]]);
-
+    gridParts.push([tempGrid[0], tempGrid[4], tempGrid[8]]);
+    gridParts.push([tempGrid[2], tempGrid[4], tempGrid[6]]);
     //columns
     for (let i = 0; i < 3; i++) {
-      gridParts.push([grid[i], grid[i + 3], grid[i + 6]]);
+      gridParts.push([tempGrid[i], tempGrid[i + 3], tempGrid[i + 6]]);
     }
-
     //rows
-    let temp = grid;
-    while (temp.length > 0) {
-      gridParts.push(temp.splice(0, 3));
+    while (tempGrid.length > 0) {
+      gridParts.push(tempGrid.splice(0, 3));
     }
-
     return gridParts;
   };
 
-  const isFull = () => {
-    return _gridArray.indexOf("") < 0;
+  const _isFull = (gameboard) => {
+    return gameboard.indexOf("") < 0;
   };
 
-  const _checkWin = (symbol) => {
-    const parsedGridArray = _gridArray.map((element) => {
-      return element === symbol ? symbol : "";
-    });
-    const gridParts = _getGridParts(parsedGridArray);
-    return gridParts.some((element) =>
+  const checkWin = (gameboard, symbol) => {
+    const gridParts = _getGridParts(gameboard);
+    const win = gridParts.some((element) =>
       element.every((symb) => symb === symbol)
     );
+    return !win && _isFull(gameboard) ? "tie" : win;
   };
 
   const play = (index, symbol) => {
     if (!!_gridArray[index]) return "invalid";
     _gridArray[index] = symbol;
-    return _checkWin(symbol);
+    return checkWin(_gridArray, symbol);
   };
 
   return {
-    isFull,
+    checkWin,
     getGridArray,
     reset,
     play,
@@ -74,13 +68,17 @@ const playerFactory = (name, symbol) => {
 const Controller = (function () {
   let _players = [];
   let _currentPlayer;
-  let AIMode = false;
+  let _AIMode = true;
 
   const _cells = document.querySelectorAll("#gameBoard > div");
   _cells.forEach((cell) => cell.addEventListener("click", _cellClick));
 
   function _render(array) {
     _cells.forEach((cell, i) => (cell.innerHTML = array[i]));
+  }
+
+  function setAIMode(bool) {
+    _AIMode = bool;
   }
 
   function _changePlayer() {
@@ -90,22 +88,37 @@ const Controller = (function () {
       _currentPlayer = 0;
     }
   }
+  function _checkGameOver(play) {
+    if (play === "tie") {
+      _tie();
+    } else {
+      play ? _win(_players[_currentPlayer]) : _changePlayer();
+    }
+  }
+  function _checkForAI() {
+    if (_AIMode) {
+      const bestMoveIndex = AI.getBestPlayIndex(
+        Gameboard.getGridArray(),
+        _players[0].getSymbol(),
+        _players[1].getSymbol()
+      );
+      const AIPlay = Gameboard.play(
+        bestMoveIndex,
+        _players[_currentPlayer].getSymbol()
+      );
+      _render(Gameboard.getGridArray());
+      _checkGameOver(AIPlay);
+    }
+  }
   function _cellClick(e) {
-    //do the play
     const playResult = Gameboard.play(
       e.target.id,
       _players[_currentPlayer].getSymbol()
     );
-    //check play validity
     if (playResult === "invalid") return;
-    //display the play
     _render(Gameboard.getGridArray());
-    //check for win or tie
-    if (!playResult && Gameboard.isFull()) {
-      _tie();
-    } else {
-      playResult ? _win(_players[_currentPlayer]) : _changePlayer();
-    }
+    _checkGameOver(playResult);
+    _checkForAI();
   }
   function _win(player) {
     MenuController.displayMessage(`${player.getName()} wins!`);
@@ -124,7 +137,7 @@ const Controller = (function () {
 
   return {
     startNewGame,
-    AIMode,
+    setAIMode,
   };
 })();
 
@@ -162,11 +175,9 @@ const MenuController = (function () {
 
   function _submitForm() {
     const inputsArray = Array.from(_formInputs);
-    console.log("test1");
     //form validation
     if (inputsArray.some((element) => !element.checkValidity())) return;
     //start a new game with input values
-    console.log("test2");
     Controller.startNewGame(
       inputsArray[0].value,
       inputsArray[1].value,
@@ -177,15 +188,14 @@ const MenuController = (function () {
   }
 
   function _AIModeOn() {
-    Controller.AIMode = true;
+    Controller.setAIMode(true);
     _gameModeAIButton.classList.add("selected");
     _gameModePvPButton.classList.remove("selected");
     _submitForm();
-    alert("Coming Soon");
   }
 
   function _AIModeOff() {
-    Controller.AIMode = false;
+    Controller.setAIMode(false);
     _gameModeAIButton.classList.remove("selected");
     _gameModePvPButton.classList.add("selected");
     _submitForm();
@@ -201,5 +211,103 @@ const MenuController = (function () {
 
   return {
     displayMessage,
+  };
+})();
+
+const AI = (function () {
+  const _NodeFactory = (gameboard, index, goodness) => {
+    return {
+      gameboard,
+      index,
+      goodness,
+    };
+  };
+
+  const _parseGameboardArray = (gameboard, player1Symbol, player2Symbol) => {
+    return gameboard.map((element) => {
+      if (player1Symbol === element) {
+        return "X";
+      } else if (player2Symbol === element) {
+        return "O";
+      } else {
+        return "";
+      }
+    });
+  };
+
+  const _getBestNode = (nodesArray) => {
+    return nodesArray.reduce((best, node) => {
+      return node.goodness > best.goodness ? node : best;
+    }, nodesArray[0]);
+  };
+
+  const _getWorstNode = (nodesArray) => {
+    return nodesArray.reduce((worst, node) => {
+      return node.goodness < worst.goodness ? node : worst;
+    }, nodesArray[0]);
+  };
+
+  const _getAllNodes = (gameboard, symbol) => {
+    const allNodes = [];
+    for (let i = 0; i < gameboard.length; i++) {
+      if (!!gameboard[i]) {
+        continue;
+      } else {
+        let tempGameboard = gameboard.map((element) => element);
+        tempGameboard[i] = symbol;
+        allNodes.push(_NodeFactory(tempGameboard, i, null));
+      }
+    }
+    return allNodes;
+  };
+
+  function _minimax(node, maximizingPlayer) {
+    const win = Gameboard.checkWin(node.gameboard, "O");
+    const lose = Gameboard.checkWin(node.gameboard, "X");
+
+    //assign goodness to terminal nodes
+    if (win || lose) {
+      if (win === true) {
+        node.goodness = 1;
+        return node;
+      } else if (lose === true) {
+        node.goodness = -1;
+        return node;
+      } else if (win === "tie" || lose === "tie") {
+        node.goodness = 0;
+        return node;
+      }
+    }
+    //recursive call
+    if (maximizingPlayer) {
+      const allNodes = _getAllNodes(node.gameboard, "O");
+      allNodes.forEach((element) => {
+        const resultNode = _minimax(element, false);
+        element.goodness = resultNode.goodness;
+      });
+      return _getBestNode(allNodes);
+    } else {
+      const allNodes = _getAllNodes(node.gameboard, "X");
+      allNodes.forEach((element) => {
+        const resultNode = _minimax(element, true);
+        element.goodness = resultNode.goodness;
+      });
+      return _getWorstNode(allNodes);
+    }
+  }
+
+  function getBestPlayIndex(gameboard, player1Symbol, player2Symbol) {
+    const parsedGameboardArray = _parseGameboardArray(
+      gameboard,
+      player1Symbol,
+      player2Symbol
+    );
+    const currentNode = _NodeFactory(parsedGameboardArray, null, null);
+    const bestNode = _minimax(currentNode, true);
+    return bestNode.index;
+  }
+
+  return {
+    getBestPlayIndex,
   };
 })();
