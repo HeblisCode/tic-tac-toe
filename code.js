@@ -82,10 +82,12 @@ const Controller = (function () {
   }
 
   function _checkGameOver(play) {
+    console.log(play);
     if (play === "tie") {
       _tie();
+    } else {
+      play ? _win(_players[_currentPlayer]) : _changePlayer();
     }
-    play ? _win(_players[_currentPlayer]) : _changePlayer();
   }
 
   function _checkForAI() {
