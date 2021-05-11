@@ -1,0 +1,210 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  font-family: "Permanent Marker", cursive;
+}
+
+/*COLOR PALETTE***************************************************/
+:root {
+  --primary: #90adc6;
+  --secondary: #fad02c;
+  --accOne: #e9eaec;
+  --accTwo: #333652;
+}
+
+/*PAGE LAYOUT*****************************************************/
+body {
+  background: var(--primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+#game {
+  flex-grow: 1;
+}
+#author {
+  justify-self: flex-end;
+  margin: 8px;
+}
+#popUpMessageAreaContainer {
+  display: none;
+  position: absolute;
+  background-color: var(--primary);
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+/*GAME LAYOUT***************************************************/
+#game {
+  width: 60%;
+  max-width: 600px;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+/*FORM STYLING**************************************************/
+form {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  grid-template-rows: repeat(2, 45px) auto;
+  padding: 10px;
+  background-color: var(--accTwo);
+  border-radius: 5px;
+  -webkit-box-shadow: 0px 5px 14px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 5px 14px 4px rgba(0, 0, 0, 0.4);
+}
+form > input,
+form > label {
+  border: none;
+  text-align: center;
+  min-width: 0;
+  font-size: 160%;
+  background-color: transparent;
+  color: var(--accOne);
+}
+#playerOneLabel {
+  order: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+#playerOne {
+  order: 2;
+}
+#playerOneSymbol {
+  order: 3;
+}
+#playerTwoLabel {
+  order: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+#playerTwo {
+  order: 5;
+}
+#playerTwoSymbol {
+  order: 6;
+}
+form > button {
+  order: 7;
+  grid-column: span 3;
+  width: 40%;
+  height: 45px;
+  margin-top: 20px;
+  justify-self: center;
+  box-shadow: none;
+  background-color: var(--accOne);
+}
+
+/*GAMEBOARD STYLING************************************************/
+#gameBoard {
+  display: grid;
+  width: 60%;
+  min-width: 250px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+#gameBoard::before {
+  content: "";
+  width: 0;
+  padding-bottom: 100%;
+  grid-row: 1 / 1;
+  grid-column: 1 / 1;
+}
+#gameBoard > *:first-child {
+  grid-row: 1 / 1;
+  grid-column: 1 / 1;
+}
+#gameBoard > div {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 45px;
+  color: var(--accOne);
+  cursor: pointer;
+}
+
+/*GAME MODE STYLING*************************************************/
+#gameModeMenu {
+  display: flex;
+  justify-content: space-between;
+  width: 60%;
+  max-width: 200px;
+}
+#gameModeMenu > button {
+  height: 80px;
+  width: 80px;
+  font-size: 100%;
+}
+#gameModeMenu > button > span {
+  font-size: 36px;
+}
+
+/*BUTTONS***********************************************************/
+button {
+  border: none;
+  border-radius: 0;
+  background-color: var(--accTwo);
+  color: var(--accOne);
+  border-radius: 3px;
+  -webkit-box-shadow: 0px 5px 14px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 5px 14px 4px rgba(0, 0, 0, 0.4);
+}
+button:hover {
+  cursor: pointer;
+  background-color: var(--secondary);
+  color: var(--accTwo);
+}
+
+/*POP UP MESSAGE****************************************************/
+#popUpMessageArea {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: column;
+  height: 30%;
+}
+#popUpMessageArea > p {
+  font-size: 40px;
+  color: var(--accOne);
+}
+#popUpMessageArea > button {
+  height: 45px;
+  width: 100px;
+  font-size: 100%;
+}
+
+/*AUTHOR************************************************************/
+#author > a {
+  color: var(--accTwo);
+}
+#author > a:hover {
+  color: var(--secondary);
+}
+
+/*CLASSES***********************************************************/
+.border-top {
+  border-top: solid 4px var(--accTwo);
+}
+.border-right {
+  border-right: solid 4px var(--accTwo);
+}
+.selected {
+  background-color: var(--secondary);
+  color: var(--accTwo);
+}
