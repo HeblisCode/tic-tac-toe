@@ -181,7 +181,7 @@ button:hover {
 }
 #popUpMessageArea > p {
   font-size: 40px;
-  color: var(--accOne);
+  color: var(--accTwo);
 }
 #popUpMessageArea > button {
   height: 45px;
