@@ -106,6 +106,8 @@ form > button {
   justify-self: center;
   box-shadow: none;
   background-color: var(--accOne);
+  color: var(--accTwo);
+  font-size: 130%;
 }
 
 /*GAMEBOARD STYLING************************************************/
